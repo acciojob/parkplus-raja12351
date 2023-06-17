@@ -1,20 +1,27 @@
 package com.driver.model;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.*;import java.util.ArrayList;import java.util.List;
 
 @Entity
-@Table(name = "parking-lots")
-public class ParkingLot {
-
+public class ParkingLot
+{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     private String name;
 
     private String address;
+
+    public ParkingLot() {}
+
+    public ParkingLot(int id, String name, String address) {
+        this.id=id;
+        this.name=name;
+        this.address=address;
+    }
+    @OneToMany(mappedBy = "parkingLot",cascade = CascadeType.ALL)
+    List<Spot> spotList = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -47,7 +54,4 @@ public class ParkingLot {
     public void setSpotList(List<Spot> spotList) {
         this.spotList = spotList;
     }
-
-    @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL)
-    private List<Spot> spotList = new ArrayList<>();
 }

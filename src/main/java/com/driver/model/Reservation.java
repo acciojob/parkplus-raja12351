@@ -1,17 +1,21 @@
 package com.driver.model;
 
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "reservations")
-public class Reservation {
-
+public class Reservation
+{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private int noOfHours;
+    private int numberOfHours;
+    public Reservation(int id, int numberOfHours) {
+        this.id=id;
+        this.numberOfHours=numberOfHours;
+    }
+
+    public Reservation() {}
 
     public int getId() {
         return id;
@@ -21,20 +25,12 @@ public class Reservation {
         this.id = id;
     }
 
-    public int getNoOfHours() {
-        return noOfHours;
+    public int getNumberOfHours() {
+        return numberOfHours;
     }
 
-    public void setNoOfHours(int noOfHours) {
-        this.noOfHours = noOfHours;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setNumberOfHours(int numberOfHours) {
+        this.numberOfHours = numberOfHours;
     }
 
     public Spot getSpot() {
@@ -53,14 +49,23 @@ public class Reservation {
         this.payment = payment;
     }
 
-    @JoinColumn
-    @ManyToOne
-    private User user;
+    public User getUser() {
+        return user;
+    }
 
-    @JoinColumn
-    @ManyToOne
-    private Spot spot;
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private Payment payment;
+    @ManyToOne @JoinColumn Spot spot;
+
+    @OneToOne(mappedBy = "reservation",cascade = CascadeType.ALL)
+    @JoinColumn
+    Payment payment;
+
+    @ManyToOne
+    @JoinColumn
+    User user;
+
+
 }
