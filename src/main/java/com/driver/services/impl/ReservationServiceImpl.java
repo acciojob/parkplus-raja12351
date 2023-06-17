@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -61,7 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
                 wheels=Integer.MAX_VALUE;
             }
 
-            if(!spot.getOccupied() && numberOfWheels<=wheels && spot.getPricePerHour()<minPrice )
+            if(spot.getOccupied()==false && numberOfWheels<=wheels && spot.getPricePerHour()<minPrice )
             {
                 minPrice=spot.getPricePerHour();
                 reqSpot=spot;
@@ -74,7 +73,7 @@ public class ReservationServiceImpl implements ReservationService {
         reqSpot.setOccupied(true);
         Reservation reservation=new Reservation();
         reservation.setSpot(reqSpot);
-        reservation.setNoOfHours(timeInHours);
+        reservation.setNumberOfHours(timeInHours);
         reservation.setUser(user);
         user.getReservationList().add(reservation);
         userRepository3.save(user);
