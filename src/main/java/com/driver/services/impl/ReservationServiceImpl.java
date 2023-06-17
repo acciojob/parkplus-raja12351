@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -23,6 +24,62 @@ public class ReservationServiceImpl implements ReservationService {
     ParkingLotRepository parkingLotRepository3;
     @Override
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
+        User user;
+        try{
+            user =userRepository3.findById(userId).get();
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Cannot make reservation");
+        }
+        ParkingLot parkingLot;
+        try {
+            parkingLot=parkingLotRepository3.findById(parkingLotId).get();
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Cannot make reservation");
+        }
 
+        int minPrice=Integer.MAX_VALUE;
+        Spot reqSpot=null;
+
+        for (Spot spot: parkingLot.getSpotList())
+        {
+            SpotType spotType=spot.getSpotType();
+            int wheels=0;
+            if (spotType.equals(SpotType.TWO_WHEELER))
+            {
+                wheels=2;
+            }
+            else if(spotType.equals(SpotType.FOUR_WHEELER))
+            {
+                wheels=4;
+            }
+            else
+            {
+                wheels=Integer.MAX_VALUE;
+            }
+
+            if(!spot.getOccupied() && numberOfWheels<=wheels && spot.getPricePerHour()<minPrice )
+            {
+                minPrice=spot.getPricePerHour();
+                reqSpot=spot;
+            }
+        }
+
+        if (reqSpot==null)
+            throw new Exception("Cannot make reservation");
+
+        reqSpot.setOccupied(true);
+        Reservation reservation=new Reservation();
+        reservation.setSpot(reqSpot);
+        reservation.setNoOfHours(timeInHours);
+        reservation.setUser(user);
+        user.getReservationList().add(reservation);
+        userRepository3.save(user);
+        spotRepository3.save(reqSpot);
+
+        return reservation;
     }
 }
